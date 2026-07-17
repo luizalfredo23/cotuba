@@ -16,18 +16,20 @@ import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.properties.AreaBreakType;
 
 public class GeradorPDF {
-	public void gerarPDF(List<String> contentList, Path arquivoSaida) {
+	public void gerarPDF(Ebook ebook) {
+		List<Capitulo> capitulos = ebook.getConteudo();
+		Path arquivoSaida = ebook.getArquivoDeSaida();
+		
 		try (var writer = new PdfWriter(Files.newOutputStream(arquivoSaida));
 				var pdf = new PdfDocument(writer);
 				var pdfDocument = new Document(pdf)) {
 
-			// TODO: definir título e autor para o livro
-			pdf.getDocumentInfo().setTitle("Livro");
-			pdf.getDocumentInfo().setAuthor("Autor");
+			pdf.getDocumentInfo().setTitle(ebook.getTitulo());
+			pdf.getDocumentInfo().setAuthor(ebook.getAutor());
 
-			contentList.forEach(content -> {
+			capitulos.forEach(capitulo -> {
 
-				List<IElement> convertToElements = HtmlConverter.convertToElements(content);
+				List<IElement> convertToElements = HtmlConverter.convertToElements(capitulo.getHtml());
 
 				if (pdf.getNumberOfPages() == 0) {
 					pdf.addNewPage();
@@ -38,8 +40,7 @@ public class GeradorPDF {
 					rootOutline = pdf.getOutlines(false);
 				}
 
-				// TODO: usar título do capítulo
-				PdfOutline chapterOutline = rootOutline.addOutline("Capítulo");
+				PdfOutline chapterOutline = rootOutline.addOutline(capitulo.getTitulo());
 				chapterOutline.addDestination(PdfExplicitDestination.createFit(pdf.getLastPage()));
 
 				for (IElement element : convertToElements) {
@@ -51,6 +52,7 @@ public class GeradorPDF {
 			});
 
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			throw new IllegalStateException("Erro ao gerar PDF: " + arquivoSaida.toAbsolutePath(), ex);
 		}
 	}

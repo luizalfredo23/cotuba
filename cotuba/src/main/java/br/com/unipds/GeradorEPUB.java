@@ -13,30 +13,32 @@ import nl.siegmann.epublib.epub.EpubWriter;
 import nl.siegmann.epublib.service.MediatypeService;
 
 public class GeradorEPUB {
-	public void gerarEPUB(List<String> contentList, Path arquivoSaida) {
+	public void gerarEPUB(Ebook ebook) {
+		
+		List<Capitulo> capitulos = ebook.getConteudo();
+		Path arquivoSaida = ebook.getArquivoDeSaida();
 
 		try {
 			var epub = new Book();
 
-			// TODO: definir título e autor para o livro
-			epub.getMetadata().addTitle("Livro");
-			epub.getMetadata().addAuthor(new Author("Autor"));
+			epub.getMetadata().addTitle(ebook.getTitulo());
+			epub.getMetadata().addAuthor(new Author(ebook.getAutor()));
 
 			boolean[] ehPrimeiroCapitulo = { true };
 
-			contentList.forEach(content ->{
+			capitulos.forEach(capitulo ->{
 				String epubHtml = """
 						  <html xmlns="http://www.w3.org/1999/xhtml">
 						    <head>
-						      <title>Capítulo</title>
+						      <title>%s</title>
 						    </head>
 						    <body>
 						      %s
 						    </body>
 						  </html>
-						""".formatted(content);
+						""".formatted(capitulo.getTitulo(), capitulo.getHtml());
 				var chapter = new Resource(epubHtml.getBytes(), MediatypeService.XHTML);
-				epub.addSection("Capítulo", chapter);
+				epub.addSection(capitulo.getTitulo(), chapter);
 
 				if (ehPrimeiroCapitulo[0]) {
 					epub.getGuide().addReference(new GuideReference(chapter, "text", "Start Reading"));
