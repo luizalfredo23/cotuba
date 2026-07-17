@@ -24,6 +24,7 @@ class MainIntegrationTest {
     Path diretorioDosMd;
 
     private Path arquivoMd;
+    private Path arquivoProperties;
 
     // Utilitários para capturar o System.err nativamente
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
@@ -37,6 +38,12 @@ class MainIntegrationTest {
         // Cria o arquivo de teste
         arquivoMd = diretorioDosMd.resolve("01-introducao.md");
         Files.writeString(arquivoMd, "# Capítulo Teste\n\nEste é um conteúdo de um arquivo Markdown.");
+
+        // Cria o ebook.properties, exigido por LeitorPropriedadesEbook antes
+        // de qualquer outra etapa do processamento em CotubaService.
+        arquivoProperties = diretorioDosMd.resolve("ebook.properties");
+        Files.writeString(arquivoProperties,
+                "cotuba.ebook.titulo=Livro Teste\ncotuba.ebook.autor=Autor Teste");
     }
 
     @AfterEach
