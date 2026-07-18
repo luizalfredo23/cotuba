@@ -5,6 +5,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 import nl.siegmann.epublib.domain.Author;
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.GuideReference;
@@ -12,8 +14,9 @@ import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.epub.EpubWriter;
 import nl.siegmann.epublib.service.MediatypeService;
 
-public class GeradorEPUB {
-	public void gerarEPUB(Ebook ebook) {
+@ApplicationScoped @Named("geradorEPUB")
+public class GeradorEPUB implements GeradorEbook {
+	public void gerar(Ebook ebook) {
 		
 		List<Capitulo> capitulos = ebook.getConteudo();
 		Path arquivoSaida = ebook.getArquivoDeSaida();

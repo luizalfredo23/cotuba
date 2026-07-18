@@ -2,6 +2,9 @@ package br.com.unipds;
 
 import java.nio.file.Path;
 
+import jakarta.enterprise.inject.se.SeContainer;
+import jakarta.enterprise.inject.se.SeContainerInitializer;
+
 public class Main {
 
 	void main(String[] args) {
@@ -16,7 +19,7 @@ public class Main {
 	    
 	    boolean modoVerboso = false;
 	    
-	    try {
+	    try (SeContainer container = SeContainerInitializer.newInstance().initialize()){
 	    	ParametrosCotuba parametrosCotuba = cliReader.readOptions(args);
 //
 //	        Path diretorioDosMD = parametrosCotuba.getDiretorioDosMD();
@@ -24,7 +27,7 @@ public class Main {
 //	        var arquivoDeSaida = parametrosCotuba.getArquivoDeSaida();
 //	        modoVerboso = parametrosCotuba.isModoVerboso();
 	        
-	        new CotubaService().executar(parametrosCotuba);
+	        container.select(CotubaService.class).get().executar(parametrosCotuba);
 
 	        return 0;
 

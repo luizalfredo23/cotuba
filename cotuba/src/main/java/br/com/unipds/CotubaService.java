@@ -5,7 +5,27 @@ import static br.com.unipds.FormatoEBook.PDF;
 
 import java.util.List;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+
+@ApplicationScoped
 public class CotubaService {
+	private final RenderizadorMD redenrizadorMD;
+	private final LeitorPropriedadesEbook leitorPropriedades;
+	private final RepositorioMarkdowns repositorioMDS;
+	private final GeradorEbook geradorPDF;
+	private final GeradorEbook geradorEPUB;
+	
+	@Inject
+	public CotubaService(RenderizadorMD redenrizadorMD, LeitorPropriedadesEbook leitorPropriedades,@Named("geradorPDF") GeradorEbook geradorPDF, @Named("geradorEPUB") GeradorEbook geradorEPUB) {
+		this.redenrizadorMD = redenrizadorMD;
+		this.leitorPropriedades = leitorPropriedades;
+		this.repositorioMDS = new RepositorioMarkdownsDiretorio();
+		this.geradorPDF = geradorPDF;
+		this.geradorEPUB = geradorEPUB;
+	}
+
 	public void executar(ParametrosCotuba parametros) {
 		var diretorioDosMD = parametros.getDiretorioDosMD();
 		var formato = parametros.getFormato();
@@ -13,28 +33,30 @@ public class CotubaService {
 		
 		Ebook ebook = new Ebook();
 		
-		LeitorPropriedadesEbook leitorPropriedades = new LeitorPropriedadesEbook();
 		leitorPropriedades.ler(diretorioDosMD, ebook);
+		
+		List<Capitulo> capitulos = repositorioMDS.buscar(diretorioDosMD);
+		
 		
         ebook.setFormato(formato);
         ebook.setArquivoDeSaida(arquivoDeSaida);
-        
-        List<Capitulo> contentList = new RedenrizadorMD().renderizar(diretorioDosMD);
-        
-        ebook.setConteudo(contentList);
+        ebook.setConteudo(capitulos);
         
         
+        redenrizadorMD.renderizar(capitulos);
         
+        GeradorEbook geradorEbook;
         
         if (PDF.equals(ebook.getFormato())) {
-            new GeradorPDF().gerarPDF(ebook);
+        	geradorEbook = geradorPDF;
         } else if (EPUB.equals(ebook.getFormato())) {
-            new GeradorEPUB().gerarEPUB(ebook);
+            geradorEbook = geradorEPUB;
         } else {
             throw new IllegalArgumentException("Formato do ebook inválido: " + formato);
         }
 
-        System.out.println("Arquivo gerado com sucesso: " + ebook.getArquivoDeSaida().toAbsolutePath());
+        geradorEbook.gerar(ebook);
         
+        System.out.println("Arquivo gerado com sucesso: " + ebook.getArquivoDeSaida().toAbsolutePath());
 	}
 }

@@ -15,8 +15,13 @@ import com.itextpdf.layout.element.IBlockElement;
 import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.properties.AreaBreakType;
 
-public class GeradorPDF {
-	public void gerarPDF(Ebook ebook) {
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
+
+@ApplicationScoped @Named("geradorPDF")
+public class GeradorPDF implements GeradorEbook {
+	@Override
+	public void gerar(Ebook ebook) {
 		List<Capitulo> capitulos = ebook.getConteudo();
 		Path arquivoSaida = ebook.getArquivoDeSaida();
 		
