@@ -10,14 +10,20 @@ import org.commonmark.node.Text;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 
-public class RedenrizadorMD {
-	public List<Capitulo> renderizar(Path diretoriosMDS) {
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
-		var repositorioMDS = new RepositorioMarkdowns();
+@ApplicationScoped
+public class RenderizadorMDCommonmark implements RenderizadorMD {
 
-		List<Capitulo> capitulos = repositorioMDS.buscar(diretoriosMDS);
+	@Inject
+	public RenderizadorMDCommonmark(RepositorioMarkdowns repositorioMDS) {
+		super();
+	}
 
-		return capitulos.stream().map(capitulo -> {
+	@Override
+	public void renderizar(List<Capitulo> capitulos) {
+		capitulos.forEach(capitulo -> {
 			Parser parser = Parser.builder().build();
 			Node document = null;
 			try {
@@ -50,14 +56,11 @@ public class RedenrizadorMD {
 				String html = renderer.render(document);
 
 				capitulo.setHtml(html);
-
-				return capitulo;
-
 			} catch (Exception ex) {
 				throw new IllegalStateException(
 						"Erro ao renderizar para HTML o arquivo " + capitulo.getArquivoMarkdown(), ex);
 			}
-		}).toList();
+		});
 
 	}
 

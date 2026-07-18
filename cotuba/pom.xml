@@ -53,7 +53,14 @@
             <version>3.27.7</version>
             <scope>test</scope>
         </dependency>
-
+		
+		<!-- Source: https://mvnrepository.com/artifact/org.jboss.weld.se/weld-se-shaded -->
+		<dependency>
+		    <groupId>org.jboss.weld.se</groupId>
+		    <artifactId>weld-se-shaded</artifactId>
+		    <version>6.0.4.Final</version>
+		    <scope>compile</scope>
+		</dependency>
     </dependencies>
 
     <repositories>
