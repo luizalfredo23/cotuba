@@ -66,12 +66,12 @@ public class CLIOptionsReader {
 
 			if (nomeDoFormatoDoEbook != null) {
 				try {
-					parametrosCotuba.setFormato(FormatoEBook.valueOf(nomeDoFormatoDoEbook.toUpperCase()));
+					parametrosCotuba.setFormato(FormatoEbook.valueOf(nomeDoFormatoDoEbook.toUpperCase()));
 				} catch (IllegalArgumentException ex) {
 					throw new IllegalArgumentException("Formato do ebook inválido: " + nomeDoFormatoDoEbook);
 				}
 			} else {
-				parametrosCotuba.setFormato(FormatoEBook.PDF);
+				parametrosCotuba.setFormato(FormatoEbook.PDF);
 			}
 
 			String nomeDoArquivoDeSaidaDoEbook = cmd.getOptionValue("output");
