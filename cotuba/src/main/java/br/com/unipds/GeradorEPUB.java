@@ -14,7 +14,7 @@ import nl.siegmann.epublib.epub.EpubWriter;
 import nl.siegmann.epublib.service.MediatypeService;
 
 @ApplicationScoped
-@FormatoEbookQualifier(FormatoEBook.EPUB)
+@FormatoEbookQualifier(FormatoEbook.EPUB)
 public class GeradorEPUB implements GeradorEbook {
 	public void gerar(Ebook ebook) {
 		

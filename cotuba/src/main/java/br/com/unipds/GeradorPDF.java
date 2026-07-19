@@ -18,7 +18,7 @@ import com.itextpdf.layout.properties.AreaBreakType;
 import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
-@FormatoEbookQualifier(FormatoEBook.PDF)
+@FormatoEbookQualifier(FormatoEbook.PDF)
 public class GeradorPDF implements GeradorEbook {
 	@Override
 	public void gerar(Ebook ebook) {

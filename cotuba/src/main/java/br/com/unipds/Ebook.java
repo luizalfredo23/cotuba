@@ -7,7 +7,7 @@ public class Ebook {
 	
 	private String titulo;
 	private String autor;
-	private FormatoEBook formato;
+	private FormatoEbook formato;
 	private List<Capitulo> conteudo;
 	private Path arquivoDeSaida;
 	public String getTitulo() {
@@ -22,10 +22,10 @@ public class Ebook {
 	public void setAutor(String autor) {
 		this.autor = autor;
 	}
-	public FormatoEBook getFormato() {
+	public FormatoEbook getFormato() {
 		return formato;
 	}
-	public void setFormato(FormatoEBook formato) {
+	public void setFormato(FormatoEbook formato) {
 		this.formato = formato;
 	}
 	public List<Capitulo> getConteudo() {

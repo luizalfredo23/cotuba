@@ -11,5 +11,5 @@ import jakarta.inject.Qualifier;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
 public @interface FormatoEbookQualifier {
-	FormatoEBook value();
+	FormatoEbook value();
 }

@@ -4,7 +4,7 @@ import java.nio.file.Path;
 
 public class ParametrosCotuba {
 	private Path diretorioDosMD;
-	private FormatoEBook formato;
+	private FormatoEbook formato;
 	private Path arquivoDeSaida;
 	private boolean modoVerboso = false;
 
@@ -16,11 +16,11 @@ public class ParametrosCotuba {
 		this.diretorioDosMD = diretorioDosMD;
 	}
 
-	public FormatoEBook getFormato() {
+	public FormatoEbook getFormato() {
 		return formato;
 	}
 
-	public void setFormato(FormatoEBook formato) {
+	public void setFormato(FormatoEbook formato) {
 		this.formato = formato;
 	}
 
