@@ -16,9 +16,9 @@ import com.itextpdf.layout.element.IElement;
 import com.itextpdf.layout.properties.AreaBreakType;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Named;
 
-@ApplicationScoped @Named("geradorPDF")
+@ApplicationScoped
+@FormatoEbookQualifier(FormatoEBook.PDF)
 public class GeradorPDF implements GeradorEbook {
 	@Override
 	public void gerar(Ebook ebook) {

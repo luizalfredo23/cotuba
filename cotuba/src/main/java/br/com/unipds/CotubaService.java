@@ -1,29 +1,25 @@
 package br.com.unipds;
 
-import static br.com.unipds.FormatoEBook.EPUB;
-import static br.com.unipds.FormatoEBook.PDF;
-
 import java.util.List;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Any;
+import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
-import jakarta.inject.Named;
 
 @ApplicationScoped
 public class CotubaService {
 	private final RenderizadorMD redenrizadorMD;
 	private final LeitorPropriedadesEbook leitorPropriedades;
 	private final RepositorioMarkdowns repositorioMDS;
-	private final GeradorEbook geradorPDF;
-	private final GeradorEbook geradorEPUB;
+	private final Instance<GeradorEbook> geradoresEbook;
 	
 	@Inject
-	public CotubaService(RenderizadorMD redenrizadorMD, LeitorPropriedadesEbook leitorPropriedades,@Named("geradorPDF") GeradorEbook geradorPDF, @Named("geradorEPUB") GeradorEbook geradorEPUB) {
+	public CotubaService(RenderizadorMD redenrizadorMD, LeitorPropriedadesEbook leitorPropriedades, @Any Instance<GeradorEbook> geradoresEbook) {
 		this.redenrizadorMD = redenrizadorMD;
 		this.leitorPropriedades = leitorPropriedades;
 		this.repositorioMDS = new RepositorioMarkdownsDiretorio();
-		this.geradorPDF = geradorPDF;
-		this.geradorEPUB = geradorEPUB;
+		this.geradoresEbook = geradoresEbook;
 	}
 
 	public void executar(ParametrosCotuba parametros) {
@@ -45,15 +41,7 @@ public class CotubaService {
         
         redenrizadorMD.renderizar(capitulos);
         
-        GeradorEbook geradorEbook;
-        
-        if (PDF.equals(ebook.getFormato())) {
-        	geradorEbook = geradorPDF;
-        } else if (EPUB.equals(ebook.getFormato())) {
-            geradorEbook = geradorEPUB;
-        } else {
-            throw new IllegalArgumentException("Formato do ebook inválido: " + formato);
-        }
+        GeradorEbook geradorEbook = geradoresEbook.select(FormatoEbookFilter.of(formato)).get();
 
         geradorEbook.gerar(ebook);
         

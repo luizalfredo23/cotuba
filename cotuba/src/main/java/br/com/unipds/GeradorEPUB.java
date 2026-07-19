@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.util.List;
 
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Named;
 import nl.siegmann.epublib.domain.Author;
 import nl.siegmann.epublib.domain.Book;
 import nl.siegmann.epublib.domain.GuideReference;
@@ -14,7 +13,8 @@ import nl.siegmann.epublib.domain.Resource;
 import nl.siegmann.epublib.epub.EpubWriter;
 import nl.siegmann.epublib.service.MediatypeService;
 
-@ApplicationScoped @Named("geradorEPUB")
+@ApplicationScoped
+@FormatoEbookQualifier(FormatoEBook.EPUB)
 public class GeradorEPUB implements GeradorEbook {
 	public void gerar(Ebook ebook) {
 		
