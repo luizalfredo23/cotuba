@@ -15,7 +15,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 @FormatoEbookQualifier(FormatoEbook.HTML)
 public class GeradorHTML implements GeradorEbook {
 	public void gerar(Ebook ebook) {
-		Path arquivoSaida = ebook.getArquivoDeSaida();
+		Path arquivoSaida = ebook.arquivoDeSaida();
 		
 		try {
 			Path diretorioSaida = Files.createDirectory(arquivoSaida);
@@ -23,7 +23,7 @@ public class GeradorHTML implements GeradorEbook {
 			Map<Capitulo, Path> capitulosMap = new HashMap<>();
 			
 			int index = 1;
-			for (Capitulo capitulo : ebook.getConteudo()) {
+			for (Capitulo capitulo : ebook.conteudo()) {
 				String nomeCapitulo = nomeCapitulo(index, capitulo);
 				System.out.println("Gerando capítulo: " + nomeCapitulo);
 				
@@ -45,11 +45,11 @@ public class GeradorHTML implements GeradorEbook {
 	}
 
 	private void escreveSumario(Path diretorioSaida, Ebook ebook, Map<Capitulo, Path> capitulosMap) throws IOException {
-		String summary =ebook.getConteudo().stream().map(capitulo -> {
+		String summary =ebook.conteudo().stream().map(capitulo -> {
 			return String.format(""
 					+ "<li>"
 					+ "	<a href=\"%s\">%s</a>"
-					+ "</li>", capitulosMap.get(capitulo).getFileName(), capitulo.getTitulo());
+					+ "</li>", capitulosMap.get(capitulo).getFileName(), capitulo.titulo());
 		}).collect(joining("\n"));
 		
 		String sumarioHtml = """
@@ -66,7 +66,7 @@ public class GeradorHTML implements GeradorEbook {
 				      </ul> 
 				    </body>
 				  </html>
-				""".formatted(ebook.getTitulo(), ebook.getTitulo(), ebook.getAutor(), summary);
+				""".formatted(ebook.titulo(), ebook.titulo(), ebook.autor(), summary);
 		
 		
 		Path arquivoIndex = diretorioSaida.resolve("index.html");
@@ -84,13 +84,13 @@ public class GeradorHTML implements GeradorEbook {
 				      %s
 				    </body>
 				  </html>
-				""".formatted(capitulo.getTitulo(), capitulo.getHtml());
+				""".formatted(capitulo.titulo(), capitulo.html());
 		
 		Files.writeString(arquivoCapitulo, epubHtml, StandardCharsets.UTF_8);
 	}
 
 	private String nomeCapitulo(int index, Capitulo capitulo) {
-		String titulo = capitulo.getTitulo().toLowerCase().replaceAll("\\W", "");
+		String titulo = capitulo.titulo().toLowerCase().replaceAll("\\W", "");
 		return "%02d-%s.html".formatted(index, titulo);
 	}
 }

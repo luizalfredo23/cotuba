@@ -4,5 +4,5 @@ import java.nio.file.Path;
 import java.util.List;
 
 public interface RepositorioMarkdowns {
-	List<Capitulo> buscar(Path diretorioMD);
+	List<Markdown> buscar(Path diretorioMD);
 }

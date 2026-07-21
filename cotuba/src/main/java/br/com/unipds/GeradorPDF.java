@@ -22,19 +22,19 @@ import jakarta.enterprise.context.ApplicationScoped;
 public class GeradorPDF implements GeradorEbook {
 	@Override
 	public void gerar(Ebook ebook) {
-		List<Capitulo> capitulos = ebook.getConteudo();
-		Path arquivoSaida = ebook.getArquivoDeSaida();
+		List<Capitulo> capitulos = ebook.conteudo();
+		Path arquivoSaida = ebook.arquivoDeSaida();
 		
 		try (var writer = new PdfWriter(Files.newOutputStream(arquivoSaida));
 				var pdf = new PdfDocument(writer);
 				var pdfDocument = new Document(pdf)) {
 
-			pdf.getDocumentInfo().setTitle(ebook.getTitulo());
-			pdf.getDocumentInfo().setAuthor(ebook.getAutor());
+			pdf.getDocumentInfo().setTitle(ebook.titulo());
+			pdf.getDocumentInfo().setAuthor(ebook.autor());
 
 			capitulos.forEach(capitulo -> {
 
-				List<IElement> convertToElements = HtmlConverter.convertToElements(capitulo.getHtml());
+				List<IElement> convertToElements = HtmlConverter.convertToElements(capitulo.html());
 
 				if (pdf.getNumberOfPages() == 0) {
 					pdf.addNewPage();
@@ -45,7 +45,7 @@ public class GeradorPDF implements GeradorEbook {
 					rootOutline = pdf.getOutlines(false);
 				}
 
-				PdfOutline chapterOutline = rootOutline.addOutline(capitulo.getTitulo());
+				PdfOutline chapterOutline = rootOutline.addOutline(capitulo.titulo());
 				chapterOutline.addDestination(PdfExplicitDestination.createFit(pdf.getLastPage()));
 
 				for (IElement element : convertToElements) {

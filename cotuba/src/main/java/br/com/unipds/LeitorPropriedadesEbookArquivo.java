@@ -9,7 +9,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 @ApplicationScoped
 public class LeitorPropriedadesEbookArquivo implements LeitorPropriedadesEbook {
 	@Override
-	public void ler(Path diretorioMD, Ebook ebook) {
+	public PropriedadesEbook ler(Path diretorioMD) {
 
 		Path arquivoProperties = diretorioMD.resolve("ebook.properties");
 
@@ -18,9 +18,8 @@ public class LeitorPropriedadesEbookArquivo implements LeitorPropriedadesEbook {
 
 			try (var inputStream = java.nio.file.Files.newBufferedReader(arquivoProperties, StandardCharsets.UTF_8)) {
 				properties.load(inputStream);
-
-				ebook.setTitulo(properties.getProperty("cotuba.ebook.titulo"));
-				ebook.setAutor(properties.getProperty("cotuba.ebook.autor"));
+				
+				return new PropriedadesEbook(properties.getProperty("cotuba.ebook.titulo"),properties.getProperty("cotuba.ebook.autor") );
 			} catch (Exception ex) {
 				throw new IllegalStateException("Erro ao ler o arquivo " + arquivoProperties, ex);
 			}

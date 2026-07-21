@@ -1,7 +1,5 @@
 package br.com.unipds;
 
-import java.nio.file.Path;
-
 import jakarta.enterprise.inject.se.SeContainer;
 import jakarta.enterprise.inject.se.SeContainerInitializer;
 
