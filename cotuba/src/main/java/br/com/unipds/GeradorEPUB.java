@@ -18,14 +18,14 @@ import nl.siegmann.epublib.service.MediatypeService;
 public class GeradorEPUB implements GeradorEbook {
 	public void gerar(Ebook ebook) {
 		
-		List<Capitulo> capitulos = ebook.getConteudo();
-		Path arquivoSaida = ebook.getArquivoDeSaida();
+		List<Capitulo> capitulos = ebook.conteudo();
+		Path arquivoSaida = ebook.arquivoDeSaida();
 
 		try {
 			var epub = new Book();
 
-			epub.getMetadata().addTitle(ebook.getTitulo());
-			epub.getMetadata().addAuthor(new Author(ebook.getAutor()));
+			epub.getMetadata().addTitle(ebook.titulo());
+			epub.getMetadata().addAuthor(new Author(ebook.autor()));
 
 			boolean[] ehPrimeiroCapitulo = { true };
 
@@ -39,22 +39,15 @@ public class GeradorEPUB implements GeradorEbook {
 						      %s
 						    </body>
 						  </html>
-						""".formatted(capitulo.getTitulo(), capitulo.getHtml());
+						""".formatted(capitulo.titulo(), capitulo.html());
 				var chapter = new Resource(epubHtml.getBytes(), MediatypeService.XHTML);
-				epub.addSection(capitulo.getTitulo(), chapter);
+				epub.addSection(capitulo.titulo(), chapter);
 
 				if (ehPrimeiroCapitulo[0]) {
 					epub.getGuide().addReference(new GuideReference(chapter, "text", "Start Reading"));
 					ehPrimeiroCapitulo[0] = false;
 				}
-				
 			});
-				
-
-						
-
-					
-				
 
 			var epubWriter = new EpubWriter();
 

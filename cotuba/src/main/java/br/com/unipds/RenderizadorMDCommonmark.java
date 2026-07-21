@@ -1,6 +1,5 @@
 package br.com.unipds;
 
-import java.nio.file.Path;
 import java.util.List;
 
 import org.commonmark.node.AbstractVisitor;
@@ -22,14 +21,19 @@ public class RenderizadorMDCommonmark implements RenderizadorMD {
 	}
 
 	@Override
-	public void renderizar(List<Capitulo> capitulos) {
-		capitulos.forEach(capitulo -> {
+	public List<Capitulo> renderizar(List<Markdown> markdownList) {
+		return markdownList.stream().map(markdown -> {
+			CapituloBuilder capituloBuilder = CapituloBuilder.builder();
+			
 			Parser parser = Parser.builder().build();
 			Node document = null;
+			
+			capituloBuilder.markdown(markdown);
+			
 			try {
-				String markdown = capitulo.getMarkdown();
+				String markdownConteudo = markdown.conteudo();
 
-				document = parser.parse(markdown);
+				document = parser.parse(markdownConteudo);
 				document.accept(new AbstractVisitor() {
 
 					@Override
@@ -37,7 +41,7 @@ public class RenderizadorMDCommonmark implements RenderizadorMD {
 						if (heading.getLevel() == 1) {
 							// capítulo
 							String tituloDoCapitulo = ((Text) heading.getFirstChild()).getLiteral();
-							capitulo.setTitulo(tituloDoCapitulo);
+							capituloBuilder.titulo(tituloDoCapitulo);
 						} else if (heading.getLevel() == 2) {
 							// seção
 						} else if (heading.getLevel() == 3) {
@@ -46,22 +50,25 @@ public class RenderizadorMDCommonmark implements RenderizadorMD {
 					}
 
 				});
+				
+				
 
 			} catch (Exception ex) {
-				throw new IllegalStateException("Erro ao fazer parse do arquivo " + capitulo.getArquivoMarkdown(), ex);
+				throw new IllegalStateException("Erro ao fazer parse do arquivo " + markdown.arquivo(), ex);
 			}
 
 			try {
 				HtmlRenderer renderer = HtmlRenderer.builder().build();
 				String html = renderer.render(document);
 
-				capitulo.setHtml(html);
+				capituloBuilder.html(html);
 			} catch (Exception ex) {
 				throw new IllegalStateException(
-						"Erro ao renderizar para HTML o arquivo " + capitulo.getArquivoMarkdown(), ex);
+						"Erro ao renderizar para HTML o arquivo " + markdown.arquivo(), ex);
 			}
-		});
-
+			
+			return capituloBuilder.build();
+		}).toList();
 	}
 
 }

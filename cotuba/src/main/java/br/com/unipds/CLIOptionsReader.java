@@ -18,7 +18,7 @@ public class CLIOptionsReader {
 
 	ParametrosCotuba readOptions(String[] args) {
 
-		var parametrosCotuba = new ParametrosCotuba();
+		var parametrosCotubaBuilder = ParametrosCotubaBuilder.builder();
 
 		var options = new Options();
 
@@ -53,44 +53,44 @@ public class CLIOptionsReader {
 			String nomeDoDiretorioDosMD = cmd.getOptionValue("dir");
 
 			if (nomeDoDiretorioDosMD != null) {
-				parametrosCotuba.setDiretorioDosMD(Paths.get(nomeDoDiretorioDosMD));
-				if (!Files.isDirectory(parametrosCotuba.getDiretorioDosMD())) {
+				parametrosCotubaBuilder.diretorioDosMD(Paths.get(nomeDoDiretorioDosMD));
+				if (!Files.isDirectory(parametrosCotubaBuilder.diretorioDosMD())) {
 					throw new IllegalArgumentException(nomeDoDiretorioDosMD + " não é um diretório.");
 				}
 			} else {
 				Path diretorioAtual = Paths.get("");
-				parametrosCotuba.setDiretorioDosMD(diretorioAtual);
+				parametrosCotubaBuilder.diretorioDosMD(diretorioAtual);
 			}
 
 			String nomeDoFormatoDoEbook = cmd.getOptionValue("format");
 
 			if (nomeDoFormatoDoEbook != null) {
 				try {
-					parametrosCotuba.setFormato(FormatoEbook.valueOf(nomeDoFormatoDoEbook.toUpperCase()));
+					parametrosCotubaBuilder.formato(FormatoEbook.valueOf(nomeDoFormatoDoEbook.toUpperCase()));
 				} catch (IllegalArgumentException ex) {
 					throw new IllegalArgumentException("Formato do ebook inválido: " + nomeDoFormatoDoEbook);
 				}
 			} else {
-				parametrosCotuba.setFormato(FormatoEbook.PDF);
+				parametrosCotubaBuilder.formato(FormatoEbook.PDF);
 			}
 
 			String nomeDoArquivoDeSaidaDoEbook = cmd.getOptionValue("output");
 			if (nomeDoArquivoDeSaidaDoEbook != null) {
 
-				parametrosCotuba.setArquivoDeSaida(Paths.get(nomeDoArquivoDeSaidaDoEbook));
+				parametrosCotubaBuilder.arquivoDeSaida(Paths.get(nomeDoArquivoDeSaidaDoEbook));
 			} else {
-				parametrosCotuba
-						.setArquivoDeSaida(Paths.get("book." + parametrosCotuba.getFormato().name().toLowerCase()));
+				parametrosCotubaBuilder
+						.arquivoDeSaida(Paths.get("book." + parametrosCotubaBuilder.formato().name().toLowerCase()));
 			}
-			if (Files.isDirectory(parametrosCotuba.getArquivoDeSaida())) {
+			if (Files.isDirectory(parametrosCotubaBuilder.arquivoDeSaida())) {
 				// deleta arquivos do diretório recursivamente
-				Files.walk(parametrosCotuba.getArquivoDeSaida()).sorted(Comparator.reverseOrder()).map(Path::toFile)
+				Files.walk(parametrosCotubaBuilder.arquivoDeSaida()).sorted(Comparator.reverseOrder()).map(Path::toFile)
 						.forEach(File::delete);
 			} else {
-				Files.deleteIfExists(parametrosCotuba.getArquivoDeSaida());
+				Files.deleteIfExists(parametrosCotubaBuilder.arquivoDeSaida());
 			}
 
-			parametrosCotuba.setModoVerboso(cmd.hasOption("verbose"));
+			parametrosCotubaBuilder.modoVerboso(cmd.hasOption("verbose"));
 		} catch (IllegalArgumentException ex) {
 			// Erros de validação de negócio (formato inválido, diretório inexistente etc.)
 			// já têm mensagem clara o suficiente — não devem ser envolvidos numa mensagem
@@ -101,6 +101,6 @@ public class CLIOptionsReader {
 			throw new IllegalStateException("Erro ao processar argumentos de linha de comando.", ex);
 		}
 
-		return parametrosCotuba;
+		return parametrosCotubaBuilder.build();
 	}
 }
